@@ -149,7 +149,53 @@ class pyNFC(object):
 
 	return self.libnfc.nfc_initiator_mifare_cmd(self.pdi, mifare_cmd, ui8Block, mifare_param)
 
+    '''
+	nfc_target_* wrappers
+    '''
+    def target_init(self, pbtRx, puiRxBits):
+	'''
+	bool nfc_target_init(const dev_info* pdi, byte_t* pbtRx, uint32_t* puiRxBits);
+	'''
+	self.libnfc.nfc_target_init.restype = c_bool
+	self.libnfc.nfc_target_init.argtypes = [POINTER(pyDEV_INFO), POINTER(BYTE_T), POINTER(c_uint)]
 
+	return self.libnfc.nfc_target_init(self.pdi, pbtRx, puiRxBits)	
+
+    def target_receive_bits(self, pbtRX, puiRxBits, pbtRxPar):
+	'''
+	bool nfc_target_receive_bits(const dev_info* pdi, byte_t* pbtRx, uint32_t* puiRxBits, byte_t* pbtRxPar);
+	'''
+	self.libnfc.nfc_target_receive_bits.restype = c_bool
+	self.libnfc.nfc_target_receive_bits.argtypes = [POINTER(pyDEV_INFO), POINTER(BYTE_T), POINTER(c_uint), POINTER(BYTE_T)]
+
+	return self.libnfc.nfc_target_receive_bits(self.pdi, pbtRX, puiRxBits, pbtRxPar)
+
+    def target_receive_bytes(self, pbtRx, puiRxLen):
+	'''
+	bool nfc_target_receive_bytes(const dev_info* pdi, byte_t* pbtRx, uint32_t* puiRxLen);
+	'''
+	self.libnfc.nfc_target_receive_bytes.restype = c_bool
+	self.libnfc.nfc_target_receive_bytes.argtypes = [POINTER(pyDEV_INFO), POINTER(BYTE_T), POINTER(c_uint)]
+
+	return self.libnfc.nfc_target_receive_bytes(self.pdi, pbtRx, puiRxLen)
+
+    def target_send_bits(self, pbtTX, uiTxBits, pbtTxPar):
+	'''
+	bool nfc_target_send_bits(const dev_info* pdi, const byte_t* pbtTx, const uint32_t uiTxBits, const byte_t* pbtTxPar);
+	'''
+	self.libnfc.nfc_target_send_bits.restype = c_bool
+	self.libnfc.nfc_target_send_bits.argtypes = [POINTER(pyDEV_INFO), POINTER(BYTE_T), c_int, POINTER(BYTE_T) ]
+
+	return self.libnfx.nfc_target_send_bits(self.pdi, pbtTX, uiTxBits, pbtTxPar)
+
+    def target_send_bytes(self, pbtTx, uiTxLen):
+	'''
+	bool nfc_target_send_bytes(const dev_info* pdi, const byte_t* pbtTx, const uint32_t uiTxLen);
+	'''
+	self.libnfc.nfc_target_send_bytes.restype = c_bool
+	self.libnfc.nfc_target_send_bytes.argtypes = [POINTER(pyDEV_INFO), POINTER(BYTE_T), c_int]
+
+	return self.libnfc.nfc_target_send_bytes(self.pdi, pbtTx, uiTxLen)
 
     def disconnect(self):
 	self.libnfc.nfc_disconnect.restype = c_bool
