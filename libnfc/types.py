@@ -12,3 +12,4 @@ class pyDEV_CALLBACKS(Structure):
 class pyDEV_INFO(Structure):
     _fields_ = [ ("pdc", POINTER(pyDEV_CALLBACKS)), ("chip_type", c_int),
             ("ds", c_int), ("acName", c_char * 256), ("bActive", c_bool), ("bCrc", c_bool), ("bPar", c_bool) ]
+            
