@@ -107,10 +107,49 @@ class pyNFC(object):
         else:
 	  return True
 
-    def initiator_select_tag(self, init_modulation, pb_init_data, init_data_len, tag):
+    def initiator_select_tag(self, init_modulation, pb_init_data, init_data_len):
 	self.libnfc.nfc_initiator_select_tag.restype = c_bool
 	self.libnfc.nfc_initiator_select_tag.argtypes = [POINTER(pyDEV_INFO), c_int, POINTER(BYTE_T), c_int, POINTER(pyTAG_INFO) ]	
-	return self.libnfc.nfc_initiator_select_tag(self.pdi, init_modulation, pb_init_data, init_data_len, tag)
+	self.tag = pyTAG_INFO()
+
+	return self.libnfc.nfc_initiator_select_tag(self.pdi, init_modulation, pb_init_data, init_data_len, self.tag)
+
+    def initiator_deselect_tag(self):
+	self.libnfc.nfc_initiator_deselect_tag.restype = c_bool
+	self.libnfc.nfc_initiator_deselect_tag.argtypes = POINTER(pyDEV_INFO)
+
+	return self.libnfc.nfc_initiator_deselect_tag(self.pdi)
+    
+    def initiator_transceive_bits(self, pbtTx, uiTxBits, pbtTxPar, pbtRx, puiRxBits, pbtRxPar):
+	'''
+ 	bool nfc_initiator_transceive_bits(const dev_info* pdi, const byte_t* pbtTx, const uint32_t uiTxBits, const byte_t* pbtTxPar, byte_t* pbtRx, uint32_t* puiRxBits, byte_t* pbtRxPar);
+ 
+        '''
+	self.libnfc.nfc_initiator_transceive_bits.restype = c_bool
+	self.libnfc.nfc_initiator_transceive_bits.argtypes = [POINTER(pyDEV_INFO), POINTER(BYTE_T), c_int, POINTER(BYTE_T), POINTER(BYTE_T), POINTER(c_int), POINTER(BYTE_T)]
+
+	return self.libnfc.nfc_initiator_transceive_bits(self.pdi, pbtTx, uiTxBits, pbtTxPar, pbtRx, puiRxBits, pbtRxPar)
+
+    def initiator_transceive_bytes(self, pbtTX, uiTxLen, pbtRx, puiRxLen):
+	'''
+	bool nfc_initiator_transceive_bytes(const dev_info* pdi, const byte_t* pbtTx, const uint32_t uiTxLen, byte_t* pbtRx, uint32_t* puiRxLen);
+
+	'''
+	self.libnfc.nfc_initiator_transceive_bytes.restype = c_bool
+	self.libnfc.nfc_initiator_transceive_bytes.argtypes = [POINTER(pyDEV_INFO), POINTER(BYTE_T), c_int, POINTER(BYTE_T),POINTER(c_int)]
+	return self.libnfc.nfc_initiator_transceive_bytes(self.pdi, pbtTX, uiTxLen, pbtRx, puiRxLen)
+
+    def initiator_mifare_cmd(self, mifare_cmd, ui8Block, mifare_param):
+	'''
+	bool nfc_initiator_mifare_cmd(const dev_info* pdi, const mifare_cmd mc, const uint8_t ui8Block, mifare_param* pmp);
+
+ 	'''
+	self.libnfc.nfc_initiator_mifare_cmd.restype = c_bool
+	self.libnfc.nfc_initiator_mifare_cmd.argtypes = [POINTER(pyDEV_INFO), c_int, c_uint, POINTER(pyMIFARE_PARAM) ]
+
+	return self.libnfc.nfc_initiator_mifare_cmd(self.pdi, mifare_cmd, ui8Block, mifare_param)
+
+
 
     def disconnect(self):
 	self.libnfc.nfc_disconnect.restype = c_bool
@@ -134,10 +173,9 @@ if __name__ == "__main__":
 
   	print nfc.configure(DCO_ACTIVATE_FIELD,True);
 
-	tag = pyTAG_INFO()
 	
-	print nfc.initiator_select_tag(IM_ISO14443A_106, None, 0, tag)
+	nfc.initiator_select_tag(IM_ISO14443A_106, None, 0)
 
-	print tag.tia.abtUid[0].byte_t
+	print nfc.tag.tia.abtUid[0].byte_t
 
 	print nfc.disconnect()
