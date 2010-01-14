@@ -5,6 +5,8 @@ from ctypes import c_uint8, c_char_p, c_int, c_bool, c_char
 
 class BYTE_T(Structure):
     _fields_ = [("byte_t", c_uint8)]
+    # TODO: rename to pyBYTE_T
+    # TODO: add a method for packing/unpacking the array
 
 class pyDEV_CALLBACKS(Structure):
         _fields_ = [("acDriver", c_char_p) ]

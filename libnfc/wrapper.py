@@ -18,9 +18,9 @@ class Wrapper(object):
         except OSError:
             print "libnfc not found"
         
-        self.pdi = None
-        self.tag = None
-    
+        self.pdi = None # stores device information
+        self.tag = None # stores tag information
+    	self.mifare_param = None # stores data generated upon querying a mifare card
         
     def connect(self):
         '''
@@ -135,16 +135,18 @@ class Wrapper(object):
             raise NFCError('initiator_transceive_bytes failed')
     
 
-    def initiator_mifare_cmd(self, mifare_cmd, ui8Block, mifare_param):
+    def initiator_mifare_cmd(self, mifare_cmd, ui8Block):
         '''
             Wraps:
                 bool nfc_initiator_mifare_cmd(const dev_info* pdi, const mifare_cmd mc, 
                                                     const uint8_t ui8Block, mifare_param* pmp);
         '''
+	self.mifare_param = pyMIFARE_PARAM()
+
         self._libnfc.nfc_initiator_mifare_cmd.restype = c_bool
         self._libnfc.nfc_initiator_mifare_cmd.argtypes = [POINTER(pyDEV_INFO), c_int, c_uint8, POINTER(pyMIFARE_PARAM) ]
         
-        if not self._libnfc.nfc_initiator_mifare_cmd(self.pdi, mifare_cmd, ui8Block, mifare_param):
+        if not self._libnfc.nfc_initiator_mifare_cmd(self.pdi, mifare_cmd, ui8Block, self.mifare_param):
             raise NFCError('initiator_mifare_cmd failed')
     
         

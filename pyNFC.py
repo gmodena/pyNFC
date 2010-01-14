@@ -122,7 +122,7 @@ class pyNFC(object):
 
   def initiator_deselect_tag(self):
     self.libnfc.nfc_initiator_deselect_tag.restype = c_bool
-    self.libnfc.nfc_initiator_deselect_tag.argtypes = POINTER(pyDEV_INFO)
+    self.libnfc.nfc_initiator_deselect_tag.argtypes = [POINTER(pyDEV_INFO)]
 
     return self.libnfc.nfc_initiator_deselect_tag(self.pdi)
 
@@ -144,13 +144,15 @@ class pyNFC(object):
     
     return self.libnfc.nfc_initiator_transceive_bytes(self.pdi, pbtTX, uiTxLen, pbtRx, puiRxLen)
 
-  def initiator_mifare_cmd(self, mifare_cmd, ui8Block, mifare_param):
+  def initiator_mifare_cmd(self, mifare_cmd, ui8Block):
     '''
     bool nfc_initiator_mifare_cmd(const dev_info* pdi, const mifare_cmd mc, const uint8_t ui8Block, mifare_param* pmp);
     '''
+    self.mifare_param = pyMIFARE_PARAM()
+
     self.libnfc.nfc_initiator_mifare_cmd.restype = c_bool
     self.libnfc.nfc_initiator_mifare_cmd.argtypes = [POINTER(pyDEV_INFO), c_int, c_uint8, POINTER(pyMIFARE_PARAM) ]
-    return self.libnfc.nfc_initiator_mifare_cmd(self.pdi, mifare_cmd, ui8Block, mifare_param)
+    return self.libnfc.nfc_initiator_mifare_cmd(self.pdi, mifare_cmd, ui8Block, self.mifare_param)
 
 
   def target_init(self, pbtRx, puiRxBits):
@@ -194,8 +196,8 @@ class pyNFC(object):
     return self.libnfc.nfc_target_send_bytes(self.pdi, pbtTx, uiTxLen)
 
 if __name__ == "__main__":
-  nfc = pyNFC()
-  nfc.connect()
+  	nfc = pyNFC()
+	nfc.connect()
 	print nfc.pdi.acName
 	print nfc.pdi.chip_type
 
@@ -211,7 +213,12 @@ if __name__ == "__main__":
 
 	
 	nfc.initiator_select_tag(IM_ISO14443A_106, None, 0)
-
 	print nfc.tag.tia.abtUid[0].byte_t
 
+	iBlock = 0
+	print nfc.initiator_mifare_cmd(MC_READ, iBlock)
+
+	print nfc.mifare_param.mpa._fields_
+
+	print nfc.initiator_deselect_tag()
 	print nfc.disconnect()
