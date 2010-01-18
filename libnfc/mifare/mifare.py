@@ -1,19 +1,22 @@
 from ctypes import Structure, Union
-from ctypes import c_int
+from ctypes import c_uint8
 from libnfc.types import BYTE_T
 
 # MIFARE classic: mifare_cmd
-MC_AUTH_A         = c_int(0x60)
-MC_AUTH_B         = c_int(0x61)
-MC_READ           = c_int(0x30)
-MC_WRITE          = c_int(0xA0)
-MC_TRANSFER       = c_int(0xB0)
-MC_DECREMENT      = c_int(0xC0)
-MC_INCREMENT      = c_int(0xC1)
-MC_STORE          = c_int(0xC2)
+MC_AUTH_A         = c_uint8(0x60)
+MC_AUTH_B         = c_uint8(0x61)
+MC_READ           = c_uint8(0x30)
+MC_WRITE          = c_uint8(0xA0)
+MC_TRANSFER       = c_uint8(0xB0)
+MC_DECREMENT      = c_uint8(0xC0)
+MC_INCREMENT      = c_uint8(0xC1)
+MC_STORE          = c_uint8(0xC2)
 
 class pyMIFARE_PARAM_AUTH(Structure):
-    _fields_ = [("abtKey", BYTE_T * 6), ("abtUid", BYTE_T * 4)]
+	_fields_ = [("abtKey", BYTE_T * 6), ("abtUid", BYTE_T * 4)]
+
+	def get_abtUid(self):
+		return _fields_['abtUid']
 
 class pyMIFARE_PARAM_DATA(Structure):
     _fields_ = [("abtData", BYTE_T * 16)]
