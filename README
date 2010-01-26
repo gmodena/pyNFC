@@ -1,0 +1,17 @@
+= General Notes =
+pyNFC is a pure python binding for libnfc1.2 (http://libnfc.org).
+Support for libnfc1.3 is a WiP.
+
+This code is currently under development and is not yet ready for production.
+
+= Install =
+pyNFC requires libnfc 1.2.x and python 2.6.
+
+To install the library type:
+
+$ python setup.py install
+
+= Use =
+
+The libnfc.wapper module contains the actual binding to libnfc's functions.
+See files under examples/ for usage tips.
