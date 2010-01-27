@@ -49,8 +49,8 @@ class pyTAG_INFO_iso14443a(Structure):
                 ("uiAtsLen", c_uint32), 
                 ("abtAts", c_uint8 * 36) ]
 
- #   def __repr__(self):
- #       return 'pyTAG_INFO_iso14443a(abtAtqa=%s, btSak=%s, uiUidLen=%, abtUid=%s, uiAtsLen=%s, abtAts=%s)' % (self.abtAtqa, self.btSak, self.uiUidLen, self.abtUid, self.uiAtsLen, self.abtAts)
+    def __repr__(self):
+        return 'pyTAG_INFO_iso14443a(abtAtqa=%s, btSak=%s, uiUidLen=%, abtUid=%s, uiAtsLen=%s, abtAts=%s)' % (self.abtAtqa, self.btSak, self.uiUidLen, self.abtUid, self.uiAtsLen, self.abtAts)
 
 class pyTAG_INFO_FELICA(Structure):
 	_pack_ = 1 # align to byte_t
@@ -60,12 +60,17 @@ class pyTAG_INFO_FELICA(Structure):
                         ("abtId", c_uint8 * 8), 
                         ("abtPad", c_uint8 * 8), 
                         ("abtSysCode", c_uint8 * 8)]
+    def __repr__(self):
+        return 'pyTAG_INFO_FELICA(uiLen=%s, btResCode=%s, abtId=%s, abtPad=%s, abtSysCode=%s)' % (self.uiLen, self.btResCode, self.abtId, self.abtPad, self.abtSysCode)
 
 class pyTAG_INFO_JEWEL(Structure):
 	_pack_ = 1 # align to byte_t
 
 	_fields_ = [("btSensRes", c_uint8 * 2 ),
                          ("btId", c_uint8 * 2)]
+    
+    def __repr__(self):
+        return 'pyTAG_INFO_JEWEL(btSensRes=%s, btId=%s)' % (self.btSensRes, self.btId)
 
 class pyTAG_INFO_iso14443b(Structure):
 	_pack_ = 1 # align to byte_t
@@ -79,6 +84,9 @@ class pyTAG_INFO_iso14443b(Structure):
                         ("btCid", c_uint8), 
                         ("uiInfLen", c_uint32), 
                         ("abtInf", c_uint8 * 64) ]
+    
+    def __repr__(self):
+        return 'pyTAG_INFO_iso14443b(abtAtqb=%s, abtId=%s, btParam1=%s, btParam2=%s, btParam4=%s, btCid=%s, uiInfLen=%s, abtInf=%s)' % (self.abtAtqb, self.abtId, self.btParam1, self.btParam2, self.btParam3, self.btParam4, self.btCid, self.uiInfLen, self.abtInf)
 
 class pyTAG_INFO(Union):
 	_pack_ = 1 # align to byte_t
@@ -87,3 +95,6 @@ class pyTAG_INFO(Union):
                         ("tif", pyTAG_INFO_FELICA),
                         ("tib", pyTAG_INFO_iso14443b), 
                         ("tij", pyTAG_INFO_JEWEL) ]
+                        
+    def __repr__(self):
+        return 'pyTAG_INFO(tia=%s, tif=%s, tib=%s, tij=%s)' % (self.tia, self.tif, self.tib, self.tij)

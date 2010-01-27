@@ -41,16 +41,32 @@ MC_INCREMENT      = c_uint8(0xC1)
 MC_STORE          = c_uint8(0xC2)
 
 class pyMIFARE_PARAM_AUTH(Structure):
+    _pack_  = 1 
 	_fields_ = [("abtKey", c_uint8 * 6), 
                         ("abtUid", c_uint8 * 4)]
+                        
+    def __repr__(self):
+        return 'pyMIFARE_PARAM_AUTH(abtKey=%s, abtUid=%s)' % (self.abtKey, self.abtUid)
 
 class pyMIFARE_PARAM_DATA(Structure):
+    _pack_ = 1
     _fields_ = [("abtData", c_uint8 * 16)]
+    
+    def __repr__(self):
+        return 'pyMIFARE_PARAM_DATA(abtData=%s)' % (self.abtData)
 
 class pyMIFARE_PARAM_VALUE(Structure):
+    _pack_ = 1
     _fields_ = [("abtValue", c_uint8 * 4)]
 
+    def __repr__(self):
+        return 'pyMIFARE_PARAM_VALUE(abtValue=%s)' % (self.abtValue)
+
 class pyMIFARE_PARAM(Union):
+    _pack_ = 1
     _fields_ = [("mpa", pyMIFARE_PARAM_AUTH), 
                 ("mpd", pyMIFARE_PARAM_DATA),
                 ("mpv", pyMIFARE_PARAM_VALUE)]
+
+    def __repr__(self):
+        return 'pyMIFARE_PARAM(mpa=%s, mpd=%s, mpv=%s)' % (self.mpa, self.mpd, self.mpv)
