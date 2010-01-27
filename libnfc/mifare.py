@@ -1,30 +1,32 @@
-"""
-Copyright 2010  Gabriele Modena <gm@nowave.it>. All rights reserved.
+#!/usr/bin/env python2.6
+#Copyright 2010  Gabriele Modena <gm@nowave.it>. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification, are
+# permitted provided that the following conditions are met:
+#
+#  1. Redistributions of source code must retain the above copyright notice, this list of
+#     conditions and the following disclaimer.
+#
+#  2. Redistributions in binary form must reproduce the above copyright notice, this list
+#     of conditions and the following disclaimer in the documentation and/or other materials
+#     provided with the distribution.
+#
+#THIS SOFTWARE IS PROVIDED BY Gabriele Modena ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+#FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> OR
+#CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+#CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+#SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+#ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+#NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+#The views and conclusions contained in the software and documentation are those of the
+#authors and should not be interpreted as representing official policies, either expressed
+#or implied, of Gabriele Modena.
 
- Redistribution and use in source and binary forms, with or without modification, are
- permitted provided that the following conditions are met:
-
-  1. Redistributions of source code must retain the above copyright notice, this list of
-     conditions and the following disclaimer.
-
-  2. Redistributions in binary form must reproduce the above copyright notice, this list
-     of conditions and the following disclaimer in the documentation and/or other materials
-     provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY Gabriele Modena ``AS IS'' AND ANY EXPRESS OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> OR
-CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-The views and conclusions contained in the software and documentation are those of the
-authors and should not be interpreted as representing official policies, either expressed
-or implied, of Gabriele Modena.
-"""
+__author__ = 'gm@nowave.it'
+__version__ = '0.1-devel'
 
 
 from ctypes import Structure, Union
@@ -46,21 +48,24 @@ class pyMIFARE_PARAM_AUTH(Structure):
                         ("abtUid", c_uint8 * 4)]
                         
     def __repr__(self):
-        return 'pyMIFARE_PARAM_AUTH(abtKey=%s, abtUid=%s)' % (self.abtKey, self.abtUid)
+        rep = ['%s=%r' % (k, getattr(self, k)) for k in self.__dict__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(rep))
 
 class pyMIFARE_PARAM_DATA(Structure):
     _pack_ = 1
     _fields_ = [("abtData", c_uint8 * 16)]
     
     def __repr__(self):
-        return 'pyMIFARE_PARAM_DATA(abtData=%s)' % (self.abtData)
+        rep = ['%s=%r' % (k, getattr(self, k)) for k in self.__dict__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(rep))
 
 class pyMIFARE_PARAM_VALUE(Structure):
     _pack_ = 1
     _fields_ = [("abtValue", c_uint8 * 4)]
 
     def __repr__(self):
-        return 'pyMIFARE_PARAM_VALUE(abtValue=%s)' % (self.abtValue)
+        rep = ['%s=%r' % (k, getattr(self, k)) for k in self.__dict__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(rep))
 
 class pyMIFARE_PARAM(Union):
     _pack_ = 1
@@ -69,4 +74,5 @@ class pyMIFARE_PARAM(Union):
                 ("mpv", pyMIFARE_PARAM_VALUE)]
 
     def __repr__(self):
-        return 'pyMIFARE_PARAM(mpa=%s, mpd=%s, mpv=%s)' % (self.mpa, self.mpd, self.mpv)
+        rep = ['%s=%r' % (k, getattr(self, k)) for k in self.__dict__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(rep))

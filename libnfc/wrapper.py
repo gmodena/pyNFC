@@ -1,30 +1,32 @@
-"""
-Copyright 2010  Gabriele Modena <gm@nowave.it>. All rights reserved.
+#!/usr/bin/env python2.6
+#Copyright 2010  Gabriele Modena <gm@nowave.it>. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification, are
+# permitted provided that the following conditions are met:
+#
+#  1. Redistributions of source code must retain the above copyright notice, this list of
+#     conditions and the following disclaimer.
+#
+#  2. Redistributions in binary form must reproduce the above copyright notice, this list
+#     of conditions and the following disclaimer in the documentation and/or other materials
+#     provided with the distribution.
+#
+#THIS SOFTWARE IS PROVIDED BY Gabriele Modena ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+#FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> OR
+#CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+#CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+#SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+#ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+#NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+#The views and conclusions contained in the software and documentation are those of the
+#authors and should not be interpreted as representing official policies, either expressed
+#or implied, of Gabriele Modena.
 
- Redistribution and use in source and binary forms, with or without modification, are
- permitted provided that the following conditions are met:
-
-  1. Redistributions of source code must retain the above copyright notice, this list of
-     conditions and the following disclaimer.
-
-  2. Redistributions in binary form must reproduce the above copyright notice, this list
-     of conditions and the following disclaimer in the documentation and/or other materials
-     provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY Gabriele Modena ``AS IS'' AND ANY EXPRESS OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> OR
-CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-The views and conclusions contained in the software and documentation are those of the
-authors and should not be interpreted as representing official policies, either expressed
-or implied, of Gabriele Modena.
-"""
+__author__ = 'gm@nowave.it'
+__version__ = '0.1-devel'
 
 from ctypes import CDLL, POINTER, CFUNCTYPE, byref, c_uint8, c_uint32, c_bool
 
@@ -123,14 +125,14 @@ class NFCWrapper(object):
             
             TODO: provide properties to easilly dispaly information contained in self.tag
 		'''
-        if pbInitData: pbInitData = byref(POINTER(c_uint8))
+        pb_init_data_p = byref(c_uint8()) if pb_init_data == True else pb_init_data
 
 		self._libnfc.nfc_initiator_select_tag.restype = c_bool
 		self._libnfc.nfc_initiator_select_tag.argtypes = [POINTER(pyDEV_INFO), c_ubyte, POINTER(c_uint8), c_uint32, POINTER(pyTAG_INFO) ]	
         
 		if not self._libnfc.nfc_initiator_select_tag(byref(self.pdi), init_modulation, pb_init_data, init_data_len, byref(self.tag)):
 			raise NFCError('Error while selecting tag')
-		else: return True
+		else: return pb_init_data_p
 
     def initiator_deselect_tag(self):
 		'''
@@ -148,7 +150,7 @@ class NFCWrapper(object):
 
     def initiator_transceive_bits(self, pbtTx, uiTxBits, pbtTxPar, pbtRx, puiRxBits, pbtRxPar):
         '''
-            (pbtTx, pbtTxPar, pbtRx, pbtRxPar) initiator_transceive_bits(pbtTx, uiTxBits, pbtTxPar, pbtRx, puiRxBits, pbtRxPar)
+            (int, int, int, int) initiator_transceive_bits(pbtTx, uiTxBits, pbtTxPar, pbtRx, puiRxBits, pbtRxPar)
             
             Wraps:
                 bool nfc_initiator_transceive_bits(const dev_info* pdi, const byte_t* pbtTx, 
@@ -171,7 +173,7 @@ class NFCWrapper(object):
 
     def initiator_transceive_bytes(self, pbtTX, uiTxLen, pbtRx, puiRxLen):
         '''
-            (pbtTx_p, pbtRx_p, puiRxLen_p) initiator_transceive_bytes(pbtTX, uiTxLen, pbtRx, puiRxLen)
+            (int, int, int) initiator_transceive_bytes(pbtTX, uiTxLen, pbtRx, puiRxLen)
         
             Wraps:
                 bool nfc_initiator_transceive_bytes(const dev_info* pdi, const byte_t* pbtTx,
@@ -192,7 +194,8 @@ class NFCWrapper(object):
 
     def initiator_mifare_cmd(self, mifare_cmd, ui8Block):
 		'''
-		    pmp initiator_mifare_cmd(mifare_cmd, ui8Block)
+		    bool initiator_mifare_cmd(mifare_cmd, ui8Block)
+		    Instantiates and initialises a new mifare_param attribute.
 		
             Wraps:
                 bool nfc_initiator_mifare_cmd(const dev_info* pdi, const mifare_cmd mc, 
@@ -200,15 +203,15 @@ class NFCWrapper(object):
 		'''
 		self._libnfc.nfc_initiator_mifare_cmd.restype = c_bool
 		self._libnfc.nfc_initiator_mifare_cmd.argtypes = [POINTER(pyDEV_INFO), c_uint8, c_uint8, POINTER(pyMIFARE_PARAM) ]
-        
-        pmp_p = byref()
-        
+                
 		if not self._libnfc.nfc_initiator_mifare_cmd(byref(self.pdi), mifare_cmd, ui8Block, byref(self.mifare_param)):
 			raise NFCError('initiator_mifare_cmd failed')
 		else: return True
         
     def target_init(self, pbtRx, puiRxBits):
         '''
+            (int, int) target_init(pbtRx, puiRxBits)
+        
             Wraps:
                 bool nfc_target_init(const dev_info* pdi, 
                     byte_t* pbtRx, uint32_t* puiRxBits);
@@ -216,12 +219,17 @@ class NFCWrapper(object):
         self._libnfc.nfc_target_init.restype = c_bool
         self._libnfc.nfc_target_init.argtypes = [POINTER(pyDEV_INFO), POINTER(c_uint8), POINTER(c_uint32)]
         
-        if not self._libnfc.nfc_target_init(byref(self.pdi), pbtRx, puiRxBits):
+        pbtRx_p = byref(c_uint8()) if pbtRx == True else pbtRx
+        puiRxBits_p = byref(c_uint32()) if puiRxBits == True else puiRxBits
+        
+        if not self._libnfc.nfc_target_init(byref(self.pdi), pbtRx_p, puiRxBits_p):
             raise NFCError('target_init failed')
-    	else: return True
+    	else: return pbtRx_p, puiRxBits_p
 
     def target_receive_bits(self, pbtRX, puiRxBits, pbtRxPar):
         '''
+            (int, int, int) target_receive_bits(pbtRX, puiRxBits, pbtRxPar)
+        
             Wraps:
                 bool nfc_target_receive_bits(const dev_info* pdi, byte_t* 
                                                 pbtRx, uint32_t* puiRxBits, byte_t* pbtRxPar);
@@ -229,23 +237,35 @@ class NFCWrapper(object):
         self._libnfc.nfc_target_receive_bits.restype = c_bool
         self._libnfc.nfc_target_receive_bits.argtypes = [POINTER(pyDEV_INFO), POINTER(c_uint8), POINTER(c_uint32), POINTER(c_uint8)]
         
-        if not self._libnfc.nfc_target_receive_bits(byref(self.pdi), pbtRX, puiRxBits, pbtRxPar):
+        pbtRx_p = byref(c_uint8()) if pbtRx else pbtRx
+        puiRxBits_p = byref(c_uint32()) if puiRxBits else puiRxBits
+        pbtRxPar_p = byref(c_uint32()) if pbtRxPar else epbtRxPar
+        
+        
+        if not self._libnfc.nfc_target_receive_bits(byref(self.pdi), pbtRX_p, puiRxBits_p, pbtRxPar_p):
             raise NFCError('Read error')
-    	else: return True
+    	else: return pbtRx_p, puiRxBits_p, pbtRxPar_p
 
     def target_receive_bytes(self, pbtRx, puiRxLen):
 		'''
+		    (int, int) target_receive_bytes(pbtRx, puiRxLen)
+		
             Wraps:
                 bool nfc_target_receive_bytes(const dev_info* pdi, byte_t* pbtRx, uint32_t* puiRxLen);
 		'''
 		self._libnfc.nfc_target_receive_bytes.restype = c_bool
 		self._libnfc.nfc_target_receive_bytes.argtypes = [POINTER(pyDEV_INFO), POINTER(c_uint8), POINTER(c_uint32)]
         
-		if not self._libnfc.nfc_target_receive_bytes(byref(self.pdi), pbtRx, puiRxLen): raise NFCError('Read error')
-		else: return True
+        pbtRx_p =  byref(c_uint8()) if pbtRx else pbtRx
+        puiRxLen_p = byref(c_uint32()) if puiRxLen else puiRxLen
+        
+		if not self._libnfc.nfc_target_receive_bytes(byref(self.pdi), pbtRx_p, puiRxLen_p): raise NFCError('Read error')
+		else: return pbtRx_p, puiRxLen_p
 
-    def target_send_bits(self, pbtTX, uiTxBits, pbtTxPar):
+    def target_send_bits(self, pbtTx, uiTxBits, pbtTxPar):
         '''
+            (int, int) target_send_bits(pbtTx, uiTxBits, pbtTxPar)
+        
             Wraps:
                 bool nfc_target_send_bits(const dev_info* pdi, const byte_t* pbtTx, 
                                             const uint32_t uiTxBits, const byte_t* pbtTxPar);
@@ -253,13 +273,18 @@ class NFCWrapper(object):
         self._libnfc.nfc_target_send_bits.restype = c_bool
         self._libnfc.nfc_target_send_bits.argtypes = [POINTER(pyDEV_INFO), POINTER(c_uint8), c_uint32, POINTER(c_uint8) ]
         
-        if not self.libnfx.nfc_target_send_bits(byref(self.pdi), pbtTX, uiTxBits, pbtTxPar):
+        pbtTx_p = byref(c_uint8()) if pbtTx else pbtTx
+        pbtTxPar_p = byref(c_uint8()) if pbtTxPar else pbtTxPar
+        
+        if not self.libnfx.nfc_target_send_bits(byref(self.pdi), pbtTx_p, uiTxBits, pbtTxPar_p):
             raise NFCError('Write error')
-    	else: return True
+    	else: return pbtTx_p, pbtTxPar_p
             
     def target_send_bytes(self, pbtTx, uiTxLen):
 
         '''
+            int target_send_bytes(pbtTx, uiTxLen)
+            
             Wraps:
                 bool nfc_target_send_bytes(const dev_info* pdi, 
                     const byte_t* pbtTx, const uint32_t uiTxLen);
@@ -267,11 +292,13 @@ class NFCWrapper(object):
         self._libnfc.nfc_target_send_bytes.restype = c_bool
         self._libnfc.nfc_target_send_bytes.argtypes = [POINTER(pyDEV_INFO), POINTER(c_uint8), c_uint32]
         
+        pbtTx_p = byref(c_uint8()) if pbtTx else pbtTx
+        
         if not self._libnfc.nfc_target_send_bytes(byref(self.pdi), pbtTx, uiTxLen):
             raise NFCError('Write error')
     	else: return True
  
     def __repr__(self):
-        return 'NFCWrapper(pdi=%s, tag=%s, mifare_param=%s)' % (self.pdi, self.tag, self.mifare_param)
-
+        rep = ['%s=%r' % (k, getattr(self, k)) for k in self.__dict__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(rep))
 

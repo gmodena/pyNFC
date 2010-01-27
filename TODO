@@ -1,0 +1,4 @@
+- Port to libnfc1.3
+- Code cleanup
+- Improve tests
+- Improve examples

@@ -1,30 +1,32 @@
-"""
-Copyright 2010  Gabriele Modena <gm@nowave.it>. All rights reserved.
+#!/usr/bin/env python2.6
+#Copyright 2010  Gabriele Modena <gm@nowave.it>. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification, are
+# permitted provided that the following conditions are met:
+#
+#  1. Redistributions of source code must retain the above copyright notice, this list of
+#     conditions and the following disclaimer.
+#
+#  2. Redistributions in binary form must reproduce the above copyright notice, this list
+#     of conditions and the following disclaimer in the documentation and/or other materials
+#     provided with the distribution.
+#
+#THIS SOFTWARE IS PROVIDED BY Gabriele Modena ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+#FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> OR
+#CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+#CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+#SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+#ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+#NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+#The views and conclusions contained in the software and documentation are those of the
+#authors and should not be interpreted as representing official policies, either expressed
+#or implied, of Gabriele Modena.
 
- Redistribution and use in source and binary forms, with or without modification, are
- permitted provided that the following conditions are met:
-
-  1. Redistributions of source code must retain the above copyright notice, this list of
-     conditions and the following disclaimer.
-
-  2. Redistributions in binary form must reproduce the above copyright notice, this list
-     of conditions and the following disclaimer in the documentation and/or other materials
-     provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY Gabriele Modena ``AS IS'' AND ANY EXPRESS OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> OR
-CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-The views and conclusions contained in the software and documentation are those of the
-authors and should not be interpreted as representing official policies, either expressed
-or implied, of Gabriele Modena.
-"""
+__author__ = 'gm@nowave.it'
+__version__ = '0.1-devel'
 
 
 from ctypes import Structure
@@ -39,7 +41,8 @@ class pyDEV_CALLBACKS(Structure):
     _pack_ = 1 # align to byte_t
 
     def __repr__(self):
-        return 'pyDEV_CALLBACKS(acDriver=%s, connect=%s, transceive=%s, disconnect=%s )' % (self.acDriver, self.connect, self.transceive, self.disconnect)
+        rep = ['%s=%r' % (k, getattr(self, k)) for k in self.__dict__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(rep))
 
 class pyDEV_INFO(Structure):
     _pack_ = 1 # align to byte_t
@@ -53,7 +56,8 @@ class pyDEV_INFO(Structure):
                 ("ui8TxBits", c_uint8) # The last TX setting.
                ]
     def __repr__(self):
-        return 'pyDEV_INFO(pdc=%s, acName=%s, ct=%s, ds=%s, bActive=%s, bCrc=%s, bPar=%s, ui8TxBits=%s)' % (self.pdc, self.acName, self.ct, self.ds, self.bActive, self.bCrc, self.bPar, self.ui8TxBits)
+        rep = ['%s=%r' % (k, getattr(self, k)) for k in self.__dict__]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(rep))
 
 # Wrap callbacks used by the library
 pyDEV_CALLBACKS._fields_ = [("acDriver", c_char_p), # driver name and description
