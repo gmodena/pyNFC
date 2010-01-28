@@ -116,23 +116,23 @@ class NFCWrapper(object):
 		else: return True    
         
     def initiator_select_tag(self, init_modulation, pb_init_data, init_data_len):
-		'''
+        '''
             Wraps:
-               bool nfc_initiator_select_tag(const dev_info* pdi, const init_modulation im, const byte_t* pbtInitData, const uint32_t uiInitDataLen, tag_info* pti); 
+            bool nfc_initiator_select_tag(const dev_info* pdi, const init_modulation im, 
+                const byte_t* pbtInitData, const uint32_t uiInitDataLen, tag_info* pti); 
             Tag related information are stored in a pyTAG_INFO object.
             Information related to the selected tag can be accessed via self.tag
-            
-            
             TODO: provide properties to easilly dispaly information contained in self.tag
-		'''
-        pb_init_data_p = byref(c_uint8()) if pb_init_data == True else pb_init_data
+        '''
+        pb_init_data_p = byref(c_uint8()) if pb_init_data else pb_init_data
 
-		self._libnfc.nfc_initiator_select_tag.restype = c_bool
-		self._libnfc.nfc_initiator_select_tag.argtypes = [POINTER(pyDEV_INFO), c_ubyte, POINTER(c_uint8), c_uint32, POINTER(pyTAG_INFO) ]	
+        self._libnfc.nfc_initiator_select_tag.restype = c_bool
+        self._libnfc.nfc_initiator_select_tag.argtypes = [POINTER(pyDEV_INFO), c_ubyte, POINTER(c_uint8), c_uint32, POINTER(pyTAG_INFO) ]	
         
-		if not self._libnfc.nfc_initiator_select_tag(byref(self.pdi), init_modulation, pb_init_data, init_data_len, byref(self.tag)):
+        if not self._libnfc.nfc_initiator_select_tag(byref(self.pdi),
+init_modulation, pb_init_data_p, init_data_len, byref(self.tag)):
 			raise NFCError('Error while selecting tag')
-		else: return pb_init_data_p
+        else: return pb_init_data_p
 
     def initiator_deselect_tag(self):
 		'''
@@ -247,20 +247,20 @@ class NFCWrapper(object):
     	else: return pbtRx_p, puiRxBits_p, pbtRxPar_p
 
     def target_receive_bytes(self, pbtRx, puiRxLen):
-		'''
+        '''
 		    (int, int) target_receive_bytes(pbtRx, puiRxLen)
-		
+        
             Wraps:
                 bool nfc_target_receive_bytes(const dev_info* pdi, byte_t* pbtRx, uint32_t* puiRxLen);
-		'''
-		self._libnfc.nfc_target_receive_bytes.restype = c_bool
-		self._libnfc.nfc_target_receive_bytes.argtypes = [POINTER(pyDEV_INFO), POINTER(c_uint8), POINTER(c_uint32)]
+        '''
+        self._libnfc.nfc_target_receive_bytes.restype = c_bool
+        self._libnfc.nfc_target_receive_bytes.argtypes = [POINTER(pyDEV_INFO), POINTER(c_uint8), POINTER(c_uint32)]
         
         pbtRx_p =  byref(c_uint8()) if pbtRx else pbtRx
         puiRxLen_p = byref(c_uint32()) if puiRxLen else puiRxLen
         
-		if not self._libnfc.nfc_target_receive_bytes(byref(self.pdi), pbtRx_p, puiRxLen_p): raise NFCError('Read error')
-		else: return pbtRx_p, puiRxLen_p
+        if not self._libnfc.nfc_target_receive_bytes(byref(self.pdi), pbtRx_p, puiRxLen_p): raise NFCError('Read error')
+        else: return pbtRx_p, puiRxLen_p
 
     def target_send_bits(self, pbtTx, uiTxBits, pbtTxPar):
         '''

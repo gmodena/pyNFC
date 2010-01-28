@@ -44,9 +44,9 @@ MC_STORE          = c_uint8(0xC2)
 
 class pyMIFARE_PARAM_AUTH(Structure):
     _pack_  = 1 
-	_fields_ = [("abtKey", c_uint8 * 6), 
-                        ("abtUid", c_uint8 * 4)]
-                        
+    _fields_ = [("abtKey", c_uint8 * 6), 
+                ("abtUid", c_uint8 * 4)]
+
     def __repr__(self):
         rep = ['%s=%r' % (k, getattr(self, k)) for k in self.__dict__]
         return '%s(%s)' % (self.__class__.__name__, ', '.join(rep))

@@ -40,9 +40,9 @@ IM_ISO14443B_106  = c_uint8(0x3)
 IM_JEWEL_106      = c_uint8(0x4)
 
 class pyTAG_INFO_iso14443a(Structure):
-	_pack_ = 1 # align to byte_t
+    _pack_ = 1 # align to byte_t
 
-	_fields_ = [("abtAtqa",  c_uint8 * 2), 
+    _fields_ = [("abtAtqa",  c_uint8 * 2), 
                 ("btSak", c_uint8), 
                 ("uiUidLen", c_uint32), 
                 ("abtUid", c_uint8 * 10), 
@@ -54,51 +54,51 @@ class pyTAG_INFO_iso14443a(Structure):
         return '%s(%s)' % (self.__class__.__name__, ', '.join(rep))
 
 class pyTAG_INFO_FELICA(Structure):
-	_pack_ = 1 # align to byte_t
+    _pack_ = 1 # align to byte_t
 
-	_fields_ = [("uiLen", c_uint32), 
-                        ("btResCode", c_uint8), 
-                        ("abtId", c_uint8 * 8), 
-                        ("abtPad", c_uint8 * 8), 
-                        ("abtSysCode", c_uint8 * 8)]
+    _fields_ = [("uiLen", c_uint32), 
+                ("btResCode", c_uint8), 
+                ("abtId", c_uint8 * 8), 
+                ("abtPad", c_uint8 * 8), 
+                ("abtSysCode", c_uint8 * 8)]
     def __repr__(self):
         rep = ['%s=%r' % (k, getattr(self, k)) for k in self.__dict__]
         return '%s(%s)' % (self.__class__.__name__, ', '.join(rep))
 
 class pyTAG_INFO_JEWEL(Structure):
-	_pack_ = 1 # align to byte_t
+    _pack_ = 1 # align to byte_t
 
-	_fields_ = [("btSensRes", c_uint8 * 2 ),
-                         ("btId", c_uint8 * 2)]
+    _fields_ = [("btSensRes", c_uint8 * 2 ),
+                ("btId", c_uint8 * 2)]
     
     def __repr__(self):
         rep = ['%s=%r' % (k, getattr(self, k)) for k in self.__dict__]
         return '%s(%s)' % (self.__class__.__name__, ', '.join(rep))
 
 class pyTAG_INFO_iso14443b(Structure):
-	_pack_ = 1 # align to byte_t
+    _pack_ = 1 # align to byte_t
 
-	_fields_ = [("abtAtqb", c_uint8 * 12), 
-                        ("abtId", c_uint8 * 4), 
-                        ("btParam1", c_uint8), 
-                        ("btParam2", c_uint8), 
-                        ("btParam3", c_uint8), 
-                        ("btParam4", c_uint8), 
-                        ("btCid", c_uint8), 
-                        ("uiInfLen", c_uint32), 
-                        ("abtInf", c_uint8 * 64) ]
-    
+    _fields_ = [("abtAtqb", c_uint8 * 12), 
+                ("abtId", c_uint8 * 4), 
+                ("btParam1", c_uint8), 
+                ("btParam2", c_uint8), 
+                ("btParam3", c_uint8), 
+                ("btParam4", c_uint8), 
+                ("btCid", c_uint8), 
+                ("uiInfLen", c_uint32), 
+                ("abtInf", c_uint8 * 64) ]
+
     def __repr__(self):
         rep = ['%s=%r' % (k, getattr(self, k)) for k in self.__dict__]
         return '%s(%s)' % (self.__class__.__name__, ', '.join(rep))
 
 class pyTAG_INFO(Union):
-	_pack_ = 1 # align to byte_t
+    _pack_ = 1 # align to byte_t
 
-	_fields_ = [("tia", pyTAG_INFO_iso14443a), 
-                        ("tif", pyTAG_INFO_FELICA),
-                        ("tib", pyTAG_INFO_iso14443b), 
-                        ("tij", pyTAG_INFO_JEWEL) ]
+    _fields_ = [("tia", pyTAG_INFO_iso14443a), 
+                ("tif", pyTAG_INFO_FELICA),
+                ("tib", pyTAG_INFO_iso14443b), 
+                ("tij", pyTAG_INFO_JEWEL) ]
                         
     def __repr__(self):
         rep = ['%s=%r' % (k, getattr(self, k)) for k in self.__dict__]
